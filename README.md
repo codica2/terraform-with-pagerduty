@@ -12,7 +12,7 @@ In this case, we will told about how to create `PagerDuty` service via `Terrafor
 ![](hierarchy.png) .<br>
 In this case we have `modulues` folder which include 2 modules `slack` and `pagerduty`.  
 We will start from `pagerduty` module.  
-```yaml
+```hcl
 provider "pagerduty" {
     token = 123412441 # You can set environment variable locally with name PAGERDUTY_TOKEN=1234566788 for better security
 }
@@ -49,8 +49,46 @@ If you want to create integrations in your service directory, you must use this 
 # Create PagerDuty integrations
 resource "pagerduty_service_integration" "prometheus" {
   count = length(var.list_of_integration)
-  vendor = element(data.pagerduty_vendor.integrations.*.id, count.index)
+  vendor = element(data.pagerduty_vendor.integrations.*.id, count.index) # take vendor from data reosurce 
   service = pagerduty_service.project_name.id
   name = "${var.list_of_integration[count.index]} Integration"
+}
+```
+If you want orchestration of your events you need to set up this resource:  
+```hcl
+# Create event rule for service
+resource "pagerduty_service_event_rule" "foo" {
+  service  = pagerduty_service.project_name.id
+  position = 0
+  disabled = true
+
+  conditions {
+    operator = "and"
+
+    subconditions {
+      operator = "contains"
+
+      parameter {
+        value = "ECS-Exec StartSession"
+        path  = "summary"
+      }
+    }
+  }
+
+  actions {
+
+    annotate {
+      value = "Someone connect to server" # Annotate for our Alert
+    }
+
+    severity {
+      value = "info" # Set severity
+    }
+
+    priority {
+      value = data.pagerduty_priority.p5.id # set priority for this event
+    }
+
+  }
 }
 ```
