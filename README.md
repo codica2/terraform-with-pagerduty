@@ -43,9 +43,9 @@ data "pagerduty_priority" "p5" {
   name = "P5"
 }
 ```
-[Read more about data resources](https://registry.terraform.io/providers/PagerDuty/pagerduty/latest/docs) . 
-If you want to create integrations in your service directory, you must use this resource:  
-```json
+[Read more about data resources](https://registry.terraform.io/providers/PagerDuty/pagerduty/latest/docs) .<br>
+If you want to create integrations in your service directory, you must use this resource:<br>
+```hcl
 # Create PagerDuty integrations
 resource "pagerduty_service_integration" "prometheus" {
   count = length(var.list_of_integration)
