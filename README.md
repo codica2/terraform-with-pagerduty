@@ -17,3 +17,14 @@ provider "pagerduty" {
     token = 123412441 # You can set environment variable locally with name PAGERDUTY_TOKEN=1234566788 for better security
 }
 ```
+On next step we will create `service directory` for project.  
+```yaml
+# Create service directory for project 
+resource "pagerduty_service" "project_name" {
+    name = "${var.project_name}"
+    description = "Project ${var.project_name} status"
+    escalation_policy = data.pagerduty_escalation_policy.main.id
+    auto_resolve_timeout = 7200
+    acknowledgement_timeout = "null"
+}
+```
