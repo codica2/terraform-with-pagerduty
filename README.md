@@ -9,7 +9,8 @@ In this case, we will told about how to create `PagerDuty` service via `Terrafor
 [Read more about Terraform](https://www.terraform.io) . 
 
 ## Hierarchy of our folders  
-![](hierarchy.png) .<br>
+![](hierarchy.png) <br>
+## Pagerduty module
 In this case we have `modulues` folder which include 2 modules `slack` and `pagerduty`.  
 We will start from `pagerduty` module.  
 ```hcl
@@ -92,3 +93,34 @@ resource "pagerduty_service_event_rule" "foo" {
   }
 }
 ```
+## Slack module
+If you want to create slack channel for accept events from pagerduty you need to set up `slack` module. Look below:<br>
+```hcl
+provider "slack" {
+    token = 123123123123 # You can set environment variable locally with name SLACK_TOKEN=xoxb-123123123-12313 for better security
+}
+```
+After this you need to create channel in your workspace:<br>
+```hcl
+resource "slack_conversation" "test" {
+  name              = "${var.slack_project_name}-site-status"
+  topic             = "Channel for PagerDuty Alerts"
+  permanent_members = []
+  is_private        = false
+  adopt_existing_channel = true
+}
+```
+## Conclusions
+In this case, we did set up `PagerDuty` with `Slack` via Terraform.<br>
+![](final-pic1.png)<br>
+![](final-pic2.png)<br>
+## License
+Copyright © 2015-2022 Codica. It is released under the [MIT License](https://opensource.org/licenses/MIT).<br>
+
+## About Codica
+
+[![Codica logo](https://www.codica.com/assets/images/logo/logo.svg)](https://www.codica.com) <br>
+
+The names and logos for Codica are trademarks of Codica.<br>
+
+We love open source software! See [our other projects](https://github.com/codica2) or [hire us](https://www.codica.com/) to design, develop, and grow your product.<br>
