@@ -9,7 +9,7 @@ In this case, we will told about how to create `PagerDuty` service via `Terrafor
 [Read more about Terraform](https://www.terraform.io) . 
 
 ## Hierarchy of our folders  
-![](hierarchy.png) 
+![](hierarchy.png) . 
 In this case we have `modulues` folder which include 2 modules `slack` and `pagerduty`.  
 We will start from `pagerduty` module.  
 ```yaml
