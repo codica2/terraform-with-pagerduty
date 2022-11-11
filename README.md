@@ -18,7 +18,7 @@ provider "pagerduty" {
 }
 ```
 On next step we will create `service directory` for project.  
-```yaml
+```hcl
 # Create service directory for project 
 resource "pagerduty_service" "project_name" {
     name = "${var.project_name}"
@@ -29,7 +29,7 @@ resource "pagerduty_service" "project_name" {
 }
 ```
 **Important** we need to use `data` of resources for example:  
-```yaml
+```hcl
 data "pagerduty_escalation_policy" "main" {
     name = "Main"
 }
@@ -52,4 +52,5 @@ resource "pagerduty_service_integration" "prometheus" {
   vendor = element(data.pagerduty_vendor.integrations.*.id, count.index)
   service = pagerduty_service.project_name.id
   name = "${var.list_of_integration[count.index]} Integration"
+}
 ```
