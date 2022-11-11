@@ -28,7 +28,7 @@ resource "pagerduty_service" "project_name" {
     acknowledgement_timeout = "null"
 }
 ```
-**Important** we need to use `data` of resources for exxample:  
+**Important** we need to use `data` of resources for example:  
 ```yaml
 data "pagerduty_escalation_policy" "main" {
     name = "Main"
@@ -43,4 +43,13 @@ data "pagerduty_priority" "p5" {
   name = "P5"
 }
 ```
-[Read more about data resources](https://registry.terraform.io/providers/PagerDuty/pagerduty/latest/docs)
+[Read more about data resources](https://registry.terraform.io/providers/PagerDuty/pagerduty/latest/docs) . 
+If you want to create integrations in your service directory, you must use this resource:  
+```json
+# Create PagerDuty integrations
+resource "pagerduty_service_integration" "prometheus" {
+  count = length(var.list_of_integration)
+  vendor = element(data.pagerduty_vendor.integrations.*.id, count.index)
+  service = pagerduty_service.project_name.id
+  name = "${var.list_of_integration[count.index]} Integration"
+```
