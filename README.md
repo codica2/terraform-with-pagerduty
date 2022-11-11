@@ -28,3 +28,19 @@ resource "pagerduty_service" "project_name" {
     acknowledgement_timeout = "null"
 }
 ```
+**Important** we need to use `data` of resources for exxample:  
+```yaml
+data "pagerduty_escalation_policy" "main" {
+    name = "Main"
+}
+
+data "pagerduty_vendor" "integrations" {
+  count = length(var.list_of_integration)
+  name = element(var.list_of_integration[*], count.index)
+}
+
+data "pagerduty_priority" "p5" {
+  name = "P5"
+}
+```
+[Read more about data resources](https://registry.terraform.io/providers/PagerDuty/pagerduty/latest/docs)
