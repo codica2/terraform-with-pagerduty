@@ -2,23 +2,30 @@
 
 ![](terraform-pagerduty-logo.png)
 
-## Description 
-In this case, we will told about how to create `PagerDuty` service via `Terraform`.  
-`PagerDuty` uses for automate, orchestrate, and accelerate responses across your digital infrastructure.
-[Read more about Pagerduty](https://support.pagerduty.com) . 
-[Read more about Terraform](https://www.terraform.io) . 
+## Description
 
-## Hierarchy of our folders  
+In this case, we will tell how to create a `PagerDuty` service via `Terraform`.  
+`PagerDuty` is used to automate, orchestrate, and accelerate responses across your digital infrastructure.
+[Read more about Pagerduty](https://support.pagerduty.com).
+[Read more about Terraform](https://www.terraform.io).
+
+## Folders hierarchy 
+
 ![](hierarchy.png) <br>
+
 ## Pagerduty module
-In this case we have `modulues` folder which include 2 modules `slack` and `pagerduty`.  
-We will start from `pagerduty` module.  
+
+We have a `modules` folder that includes 2 modules `slack` and `pagerduty`.  
+Let's start with `pagerduty` module.  
+
 ```hcl
 provider "pagerduty" {
-    token = 123412441 # You can set environment variable locally with name PAGERDUTY_TOKEN=1234566788 for better security
+    token = 123412441 # You can set the environment variable locally with the name PAGERDUTY_TOKEN=1234566788 for better security
 }
 ```
-On next step we will create `service directory` for project.  
+
+Now will create a `service directory` for the project.  
+
 ```hcl
 # Create service directory for project 
 resource "pagerduty_service" "project_name" {
@@ -29,7 +36,9 @@ resource "pagerduty_service" "project_name" {
     acknowledgement_timeout = "null"
 }
 ```
-**Important** we need to use `data` of resources for example:  
+
+**Important** we need to use `data` source, for example:  
+
 ```hcl
 data "pagerduty_escalation_policy" "main" {
     name = "Main"
@@ -44,18 +53,22 @@ data "pagerduty_priority" "p5" {
   name = "P5"
 }
 ```
-[Read more about data resources](https://registry.terraform.io/providers/PagerDuty/pagerduty/latest/docs) .<br>
+
+[Read more about data resources](https://registry.terraform.io/providers/PagerDuty/pagerduty/latest/docs).<br>
 If you want to create integrations in your service directory, you must use this resource:<br>
+
 ```hcl
 # Create PagerDuty integrations
 resource "pagerduty_service_integration" "prometheus" {
   count = length(var.list_of_integration)
-  vendor = element(data.pagerduty_vendor.integrations.*.id, count.index) # take vendor from data reosurce 
+  vendor = element(data.pagerduty_vendor.integrations.*.id, count.index) # take vendor from data resource 
   service = pagerduty_service.project_name.id
   name = "${var.list_of_integration[count.index]} Integration"
 }
 ```
-If you want orchestration of your events you need to set up this resource:  
+
+If you want to configure orchestration for your events you need to set up this resource:  
+
 ```hcl
 # Create event rule for service
 resource "pagerduty_service_event_rule" "foo" {
@@ -93,14 +106,19 @@ resource "pagerduty_service_event_rule" "foo" {
   }
 }
 ```
+
 ## Slack module
-If you want to create slack channel for accept events from pagerduty you need to set up `slack` module. Look below:<br>
+
+To create a slack channel to accept events from pagerduty you need to set up `slack` module. Example below:<br>
+
 ```hcl
 provider "slack" {
-    token = 123123123123 # You can set environment variable locally with name SLACK_TOKEN=xoxb-123123123-12313 for better security
+    token = 123123123123 # You can set the environment variable locally with name SLACK_TOKEN=xoxb-123123123-12313 for better security
 }
 ```
-After this you need to create channel in your workspace:<br>
+
+Create a channel in your workspace:<br>
+
 ```hcl
 resource "slack_conversation" "test" {
   name              = "${var.slack_project_name}-site-status"
@@ -110,11 +128,15 @@ resource "slack_conversation" "test" {
   adopt_existing_channel = true
 }
 ```
-## Conclusions
-In this case, we did set up `PagerDuty` with `Slack` via Terraform.<br>
+
+## Conclusion
+
+In this case, we performed a set up of `PagerDuty` with `Slack` via Terraform.<br>
 ![](final-pic1.png)<br>
 ![](final-pic2.png)<br>
+
 ## License
+
 Copyright © 2015-2022 Codica. It is released under the [MIT License](https://opensource.org/licenses/MIT).<br>
 
 ## About Codica
@@ -123,4 +145,4 @@ Copyright © 2015-2022 Codica. It is released under the [MIT License](https://op
 
 The names and logos for Codica are trademarks of Codica.<br>
 
-We love open source software! See [our other projects](https://github.com/codica2) or [hire us](https://www.codica.com/) to design, develop, and grow your product.<br>
+We love open-source software! See [our other projects](https://github.com/codica2) or [hire us](https://www.codica.com/) to design, develop, and grow your product.<br>
